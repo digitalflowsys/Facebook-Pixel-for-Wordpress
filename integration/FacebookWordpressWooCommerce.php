@@ -31,7 +31,7 @@ class FacebookWordpressWooCommerce extends FacebookWordpressIntegrationBase {
   const TRACKING_NAME = 'woocommerce';
 
   // Being consistent with the WooCommerce plugin
-  const FB_ID_PREFIX = 'wc_post_id_';
+  const FB_ID_PREFIX = 'integrohu_';
 
   const DIV_ID_FOR_AJAX_PIXEL_EVENTS = 'fb-pxl-ajax-code';
 
@@ -105,7 +105,7 @@ class FacebookWordpressWooCommerce extends FacebookWordpressIntegrationBase {
     $event_data = self::getPIIFromSession();
 
     $product_id = self::getProductId($product);
-    $content_type = $product->is_type('variable') ? 'product_group' : 'product';
+    $content_type = 'product';
 
     $event_data['content_type'] = $content_type;
     $event_data['currency'] = \get_woocommerce_currency();
@@ -152,11 +152,6 @@ class FacebookWordpressWooCommerce extends FacebookWordpressIntegrationBase {
 
     foreach ($order->get_items() as $item) {
       $product = wc_get_product($item->get_product_id());
-      if ('product_group' !== $content_type
-        && $product->is_type('variable'))
-      {
-        $content_type = 'product_group';
-      }
 
       $quantity = $item->get_quantity();
       $product_id = self::getProductId($product);
@@ -344,10 +339,10 @@ class FacebookWordpressWooCommerce extends FacebookWordpressIntegrationBase {
 
   private static function getProductId($product) {
     $woo_id = $product->get_id();
-
-    return $product->get_sku() ?
-      $product->get_sku() . '_' . $woo_id
-      : self::FB_ID_PREFIX . $woo_id;
+    if(($parent_id = $product->get_parent_id()) !== 0 ){
+      return self::FB_ID_PREFIX.$parent_id;
+    }
+    return self::FB_ID_PREFIX . $woo_id;
   }
 
   private static function getPIIFromSession(){
