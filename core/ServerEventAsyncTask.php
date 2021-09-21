@@ -147,6 +147,10 @@ class ServerEventAsyncTask extends \WP_Async_Task {
       FacebookServerSideEvent::send($events);
     }
     catch (\Exception $ex) {
+      wc_get_logger()->error('Error sending action',[
+        "events" => $events,
+        "exception" => $ex
+      ]);
       error_log($ex);
     }
   }
