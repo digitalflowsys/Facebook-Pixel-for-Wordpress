@@ -46,10 +46,10 @@ class ServerEventAsyncTask extends \WP_Async_Task {
     $user_data = array();
     foreach($user_data_normalized as $norm_key => $field){
       if(array_key_exists($norm_key, $norm_key_to_key)){
-        $user_data[$norm_key_to_key[$norm_key]] = $field;
+        $user_data[$norm_key_to_key[$norm_key]] = is_array($field) ? array_pop($field) : $field;
       }
       else{
-        $user_data[$norm_key] = $field;
+        $user_data[$norm_key] = is_array($field) ? array_pop($field) : $field;
       }
     }
     return $user_data;
